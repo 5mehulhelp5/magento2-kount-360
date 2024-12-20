@@ -124,11 +124,10 @@ class RisService
 
     /**
      * @param \Magento\Sales\Model\Order $order
-     * @param $processorAuthorized
      * @return bool
      * @throws \Exception
      */
-    public function updateRequest(Order $order, $processorAuthorized): bool
+    public function updateRequest(Order $order): bool
     {
         $ris = $this->orderRis->getRis($order);
         if (empty($ris->getTransactionId())) {
@@ -136,7 +135,7 @@ class RisService
             return false;
         }
 
-        $updateRequest = $this->updateBuilder->build($order, $ris->getTransactionId(), $processorAuthorized);
+        $updateRequest = $this->updateBuilder->build($order, $ris->getTransactionId());
         $updateRequest = $updateRequest->getData();
         $url = $this->configAccount->getKountOrderEndpoint();
         $this->apiClient->patch('updateOrder', $url . '/' . $ris->getTransactionId(), $updateRequest);

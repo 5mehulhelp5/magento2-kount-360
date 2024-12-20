@@ -19,10 +19,9 @@ class Builder
     /**
      * @param \Magento\Sales\Model\Order $order
      * @param string $risTransactionId
-     * @param bool $processorAuthorized
      * @return \Magento\Framework\DataObject
      */
-    public function build(Order $order, $risTransactionId, $processorAuthorized): DataObject
+    public function build(Order $order, $risTransactionId): DataObject
     {
         $updateRequest = $this->updateFactory->create($order->getStore()->getWebsiteId());
         $this->orderBuilder->processUpdate($updateRequest, $risTransactionId, $order);

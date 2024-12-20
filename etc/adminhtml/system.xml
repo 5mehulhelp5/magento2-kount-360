@@ -32,17 +32,26 @@
                     </depends>
                 </field>
 
-                <field id="client_id" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="client_id_test" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Client ID</label>
-                    <comment>Client ID</comment>
+                    <comment>Client ID For Test / Sandbox Mode</comment>
                     <depends>
                         <field id="enabled">1</field>
+                        <field id="test">1</field>
+                    </depends>
+                </field>
+                <field id="client_id_production" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Client ID</label>
+                    <comment>Client ID For Production Mode</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="test">0</field>
                     </depends>
                 </field>
 
                 <field id="api_key_production" translate="label comment" type="obscure" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>API Key</label>
-                    <comment>K360 portal - Admin - Product Configuration - API Keys</comment>
+                    <comment>API Key For Production</comment>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <depends>
                         <field id="enabled">1</field>
@@ -51,7 +60,7 @@
                 </field>
                 <field id="api_key_test" translate="label comment" type="obscure" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>API Key</label>
-                    <comment>K360 portal - Admin - Product Configuration - API Keys.</comment>
+                    <comment>API Key For Test / Sandbox Mode</comment>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <depends>
                         <field id="enabled">1</field>
@@ -81,7 +90,7 @@
                 </field>
 
                 <field id="decline_action" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Decline Action</label>
+                    <label>Review / Decline Action</label>
                     <source_model>Kount\Kount360\Model\Config\Source\DeclineAction</source_model>
                     <comment>Cancel should be used with payment method in Authorize Only mode.  Refund should be used with payment method in Authorize and Capture mode.</comment>
                     <depends>

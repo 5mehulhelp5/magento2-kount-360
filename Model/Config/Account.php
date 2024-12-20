@@ -30,7 +30,16 @@ class Account
 
     public function getAuthUrl($websiteCode = null)
     {
-        return $this->scopeConfig->getValue('kount360/account/auth_url', ScopeInterface::SCOPE_WEBSITE, $websiteCode);
+        return $this->isTestMode($websiteCode) ? $this->scopeConfig->getValue(
+            'kount360/account/auth_url_test',
+            ScopeInterface::SCOPE_WEBSITE,
+            $websiteCode
+        )
+            : $this->scopeConfig->getValue(
+                'kount360/account/auth_url_production',
+                ScopeInterface::SCOPE_WEBSITE,
+                $websiteCode
+            );
     }
 
     /**
@@ -63,7 +72,8 @@ class Account
      */
     public function getClientId($websiteCode = null)
     {
-        return $this->scopeConfig->getValue('kount360/account/client_id', ScopeInterface::SCOPE_WEBSITE, $websiteCode);
+        return $this->isTestMode($websiteCode) ? $this->scopeConfig->getValue('kount360/account/client_id_test', ScopeInterface::SCOPE_WEBSITE, $websiteCode)
+        : $this->scopeConfig->getValue('kount360/account/client_id_production', ScopeInterface::SCOPE_WEBSITE, $websiteCode);
     }
 
     /**
@@ -175,14 +185,42 @@ class Account
     public function getStoreInformation($websiteCode = null): array
     {
         $storeInformation = [];
-        $storeInformation['name'] = $this->scopeConfig->getValue('general/store_information/street_line1', ScopeInterface::SCOPE_STORE, $websiteCode);
+        $storeInformation['name'] = $this->scopeConfig->getValue(
+            'general/store_information/street_line1',
+            ScopeInterface::SCOPE_STORE,
+            $websiteCode
+        );
         $storeInformation['address'] = [];
-        $storeInformation['address']['line1'] = $this->scopeConfig->getValue('general/store_information/street_line1', ScopeInterface::SCOPE_STORE, $websiteCode);
-        $storeInformation['address']['line2'] = $this->scopeConfig->getValue('general/store_information/street_line2', ScopeInterface::SCOPE_STORE, $websiteCode);
-        $storeInformation['address']['city'] = $this->scopeConfig->getValue('general/store_information/city', ScopeInterface::SCOPE_STORE, $websiteCode);
-        $storeInformation['address']['region'] = $this->scopeConfig->getValue('general/store_information/region_id', ScopeInterface::SCOPE_STORE, $websiteCode);
-        $storeInformation['address']['countryCode'] = $this->scopeConfig->getValue('general/store_information/country_id', ScopeInterface::SCOPE_STORE, $websiteCode);
-        $storeInformation['address']['postalCode'] = $this->scopeConfig->getValue('general/store_information/postcode', ScopeInterface::SCOPE_STORE, $websiteCode);
+        $storeInformation['address']['line1'] = $this->scopeConfig->getValue(
+            'general/store_information/street_line1',
+            ScopeInterface::SCOPE_STORE,
+            $websiteCode
+        );
+        $storeInformation['address']['line2'] = $this->scopeConfig->getValue(
+            'general/store_information/street_line2',
+            ScopeInterface::SCOPE_STORE,
+            $websiteCode
+        );
+        $storeInformation['address']['city'] = $this->scopeConfig->getValue(
+            'general/store_information/city',
+            ScopeInterface::SCOPE_STORE,
+            $websiteCode
+        );
+        $storeInformation['address']['region'] = $this->scopeConfig->getValue(
+            'general/store_information/region_id',
+            ScopeInterface::SCOPE_STORE,
+            $websiteCode
+        );
+        $storeInformation['address']['countryCode'] = $this->scopeConfig->getValue(
+            'general/store_information/country_id',
+            ScopeInterface::SCOPE_STORE,
+            $websiteCode
+        );
+        $storeInformation['address']['postalCode'] = $this->scopeConfig->getValue(
+            'general/store_information/postcode',
+            ScopeInterface::SCOPE_STORE,
+            $websiteCode
+        );
         return $storeInformation;
     }
 }
