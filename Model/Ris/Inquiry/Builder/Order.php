@@ -62,7 +62,9 @@ class Order
     protected function processGeneralInfo(DataObject $request, OrderInterface $order): void
     {
         $request->setData('merchantOrderId', $order->getIncrementId());
-        $request->setData('channel', 'DEFAULT');
+        $storeInformation = $this->configAccount->getStoreInformation();
+        $store = $order->getStore();
+        $request->setData('channel', $store->getBaseUrl() ?? 'MAGENTO');
         $request->setData('deviceSessionId', $this->kountSession->getDeviceSessionId() ?? $order->getIncrementId());
         $now = $this->getCurrentTime();
         $request->setData('creationDateTime', $now);

@@ -98,14 +98,6 @@
                     </depends>
                 </field>
 
-                <field id="notify_processor_decline" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Notify Kount RIS of Processor Decline</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <depends>
-                        <field id="kount360/account/enabled">1</field>
-                    </depends>
-                </field>
-
                 <field id="prevent_resetting_order_status" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Prevent Resetting of Order Status</label>
                     <comment>Prevent resetting of order status on 'payment review' and 'fraud' by payment method.</comment>
@@ -136,7 +128,7 @@
 
             <group id="paymentmethods" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>Disable Payment Methods</label>
-                <comment>Kount RIS inquiry is not performed for payment methods which are disabled here.</comment>
+                <comment>Kount risk inquiry is not performed for payment methods which are disabled here.</comment>
 
                 <field id="disable_methods" translate="label comment" type="multiselect" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Disable Payment Method Codes</label>
@@ -153,27 +145,19 @@
                 <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Enable or disable ENS.</comment>
+                    <comment>Enable or disable Event Webhook.</comment>
                 </field>
                 <field id="did_where" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Url</label>
-                    <comment>ENS URL to be added in the Kount Agent Web Console</comment>
+                    <comment>Event Webhook URL to be added in the Kount 360 Portal</comment>
                     <frontend_model>Kount\Kount360\Block\Adminhtml\System\Config\Ens</frontend_model>
-                    <depends>
-                        <field id="kount360/ens/enabled">1</field>
-                    </depends>
-                </field>
-                <field id="kount_ips" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Kount ENS IPs</label>
-                    <comment>ENS and additional load balancer IPs. Enter comma separated. ENS IPs can be obtained from Kount Customer Success Manager.</comment>
-                    <validate>required-entry</validate>
                     <depends>
                         <field id="kount360/ens/enabled">1</field>
                     </depends>
                 </field>
                 <field id="addition_ips" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Additional IPs for Load Balancer</label>
-                    <comment>Additional IPs from which allowed ENS. Enter comma separated.</comment>
+                    <comment>Additional IPs from which allowed Kount Webhooks to be accepted by Magento. Enter comma separated.</comment>
                     <depends>
                         <field id="kount360/ens/enabled">1</field>
                     </depends>
@@ -187,15 +171,6 @@
                     <label>Enable Kount 360 Logging</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
-                        <field id="kount360/account/enabled">1</field>
-                    </depends>
-                </field>
-
-                <field id="ris_metrics_enabled" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Log Ris Metrics</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <depends>
-                        <field id="kount360/log/enabled">1</field>
                         <field id="kount360/account/enabled">1</field>
                     </depends>
                 </field>

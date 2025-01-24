@@ -186,7 +186,7 @@ class Account
     {
         $storeInformation = [];
         $storeInformation['name'] = $this->scopeConfig->getValue(
-            'general/store_information/street_line1',
+            'general/store_information/name',
             ScopeInterface::SCOPE_STORE,
             $websiteCode
         );

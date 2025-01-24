@@ -62,7 +62,22 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getRisResponse()
     {
-        return $this->ris->getResponse() ? : __('N/A');
+        $response = $this->ris->getResponse();
+        
+        if (!$response) {
+            return __('N/A');
+        }
+        
+        switch ($response) {
+            case 'A':
+                return "Approve";
+            case 'D':
+                return "Decline";
+            case 'R':
+                return "Review";
+            default:
+                return "N/A";
+        }
     }
 
     /**

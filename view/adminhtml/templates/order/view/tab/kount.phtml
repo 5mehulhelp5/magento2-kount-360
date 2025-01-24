@@ -15,7 +15,7 @@
             <table cellspacing="0" class="form-list admin__table-primary">
                 <tr>
                     <td class="label">
-                        <label><?= __($block->escapeHtml('Score')) ?></label>
+                        <label><?= __($block->escapeHtml('Omniscore')) ?></label>
                         <p><i><?= __($block->escapeHtml('Higher indicates less risk'))?></i></p>
                     </td>
                     <td class="value"><strong><?= $block->escapeHtml($block->getOmniscore()) ?></strong></td>
@@ -29,7 +29,7 @@
                     <td class="value"><strong><?= nl2br($block->getRisRules()) ?></strong></td>
                 </tr>
                 <tr>
-                    <td class="label"><label><?= __($block->escapeHtml('Transaction ID (TRAN)')) ?></label></td>
+                    <td class="label"><label><?= __($block->escapeHtml('Transaction ID')) ?></label></td>
                     <td class="value">
                         <?php if ($block->getRisTransactionId()): ?>
                             <strong><a href="<?= $block->escapeHtmlAttr($block->getAWCUrl()) ?>" target="_blank"><?= $block->escapeHtml($block->getRisTransactionId()) ?></a></strong>
@@ -37,27 +37,27 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="label"><label><?= __($block->escapeHtml('Persona Country (GEOX)')) ?></label></td>
+                    <td class="label"><label><?= __($block->escapeHtml('Persona Country')) ?></label></td>
                     <td class="value"><strong><?= $block->escapeHtml($block->getRisGeox()) ?></strong></td>
                 </tr>
                 <tr>
-                    <td class="label"><label><?= __($block->escapeHtml('Device Country (DVCC)')) ?></label></td>
+                    <td class="label"><label><?= __($block->escapeHtml('Device Country')) ?></label></td>
                     <td class="value"><strong><?= $block->escapeHtml($block->getRisCountry()) ?></strong></td>
                 </tr>
                 <tr>
-                    <td class="label"><label><?= __($block->escapeHtml('Data Collector Present (KAPT)')) ?></label></td>
+                    <td class="label"><label><?= __($block->escapeHtml('Data Collector Present')) ?></label></td>
                     <td class="value"><strong><?= $block->escapeHtml($block->getRisKaptcha()) ?></strong></td>
                 </tr>
                 <tr>
-                    <td class="label"><label><?= __($block->escapeHtml('Cards associated with Persona (CARDS)')) ?></label></td>
+                    <td class="label"><label><?= __($block->escapeHtml('Cards associated with Persona')) ?></label></td>
                     <td class="value"><strong><?= $block->escapeHtml($block->getRisCards()) ?></strong></td>
                 </tr>
                 <tr>
-                    <td class="label"><label><?= __($block->escapeHtml('Emails associated with Persona (EMAILS)')) ?></label></td>
+                    <td class="label"><label><?= __($block->escapeHtml('Emails associated with Persona')) ?></label></td>
                     <td class="value"><strong><?= $block->escapeHtml($block->getRisEmails()) ?></strong></td>
                 </tr>
                 <tr>
-                    <td class="label"><label><?= __($block->escapeHtml('Devices associated with Persona (DEVICES)')) ?></label></td>
+                    <td class="label"><label><?= __($block->escapeHtml('Devices associated with Persona')) ?></label></td>
                     <td class="value"><strong><?= $block->escapeHtml($block->getRisDevices()) ?></strong></td>
                 </tr>
                 <tr>

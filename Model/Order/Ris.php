@@ -158,9 +158,9 @@ class Ris
     {
         $rules = '';
 
-        if (!empty($response['order']['riskInquiry'][0]['policySetExecuted']['policiesExecuted'])) {
-            foreach ($response['order']['riskInquiry'][0]['policySetExecuted']['policiesExecuted'] as $policy) {
-                $rules .= 'Rule ID ' . ($policy['id'] ?? 'N/A') . ': ' . ($policy['name'] ?? 'Unknown Rule') . "\n";
+        if (isset($response['order']['riskInquiry']['segmentExecuted']['policiesExecuted'])) {
+            foreach ($response['order']['riskInquiry']['segmentExecuted']['policiesExecuted'] as $policy) {
+                $rules .= $policy['name'] . "\n";
             }
         } else {
             $rules = 'No Rules';
