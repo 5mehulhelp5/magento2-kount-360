@@ -30,7 +30,7 @@
             </account>
             <ens>
                 <enabled>1</enabled>
-                <kount_ips>64.128.91.251,209.81.12.251</kount_ips>
+                <kount_ips>64.128.91.251,209.81.12.251,147.146.254.226,147.146.254.225</kount_ips>
             </ens>
             <workflow>
                 <workflow_mode>pre_auth</workflow_mode>
