@@ -27,6 +27,6 @@ class Session
      */
     public function process(\Magento\Framework\DataObject $request)
     {
-        $request->setSessionId($this->kountSession->getKountSessionId());
+        $request->setData('deviceSessionId', $this->kountSession->getKountSessionId());
     }
 }

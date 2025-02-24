@@ -91,14 +91,18 @@ class Ris
             // Handle device data if it exists
             $device = $riskInquiry['device'] ?? null;
             if ($device) {
+                /*
                 $ris->setGeox(
                     isset($device['location']['latitude'], $device['location']['longitude'])
                         ? $device['location']['latitude'] . ',' . $device['location']['longitude']
                         : ''
                 );
+                */
+                $ris->setGeox($device['location']['country'] ?? '');
                 $ris->setCountry($device['location']['country'] ?? '');
                 $ris->setKaptcha($device['tor'] ?? false ? 'Yes' : 'No');
-                $ris->setIpAddress($device['id'] ?? '');
+                //$ris->setIpAddress($device['id'] ?? '');
+                $ris->setIpAddress('N/A');
                 $ris->setIpCity($device['location']['city'] ?? '');
                 $ris->setNetw($device['deviceAttributes']['os'] ?? '');
                 $ris->setMobileDevice($device['deviceAttributes']['mobileSdkType'] ?? '');

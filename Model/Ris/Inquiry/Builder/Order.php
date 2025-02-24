@@ -26,7 +26,7 @@ class Order
         private \Kount\Kount360\Model\Logger $logger,
         private \Kount\Kount360\Model\Config\Account $configAccount,
         private \Magento\SalesRule\Api\RuleRepositoryInterface $ruleRepository,
-        private \Kount\Kount360\Model\Session $kountSession,
+        private \Kount\Kount360\Model\Ris\Base\Builder\Session $kountSession,
         private \Magento\Framework\App\Request\Http $requestHttp
     ) {
     }
@@ -65,7 +65,7 @@ class Order
         $storeInformation = $this->configAccount->getStoreInformation();
         $store = $order->getStore();
         $request->setData('channel', $store->getBaseUrl() ?? 'MAGENTO');
-        $request->setData('deviceSessionId', $this->kountSession->getDeviceSessionId() ?? $order->getIncrementId());
+        $this->kountSession->process($request);
         $now = $this->getCurrentTime();
         $request->setData('creationDateTime', $now);
         $this->processIpAndUserAgent($request, $order);
