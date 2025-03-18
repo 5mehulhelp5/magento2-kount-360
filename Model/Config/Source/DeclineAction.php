@@ -18,7 +18,7 @@ class DeclineAction implements \Magento\Framework\Option\ArrayInterface
     {
         return [
             ['value' => self::ACTION_HOLD, 'label' => __('Hold Order / Decline Status')],
-            ['value' => self::ACTION_CANCEL, 'label' => __('Cancel Order / Void Payment')],
+            ['value' => self::ACTION_CANCEL, 'label' => __('Review Order / Void Payment')],
             ['value' => self::ACTION_REFUND, 'label' => __('Refund / Credit Order')]
         ];
     }
