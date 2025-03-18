@@ -1,4 +1,4 @@
-Magento 2 Kount 360 App
+Magento 2 Kount 360 Module
 =============================================
 
 This is the official Magento 2 extension for Kount.
