@@ -114,14 +114,17 @@ class Order
         $currency = $this->configAccount->getCurrency();
         $transactionData['orderTotal'] = (string) ($order->getBaseGrandTotal() * 100);
         $transactionData['currency'] = $currency;
+
+        // Get Addresses
+        $shippingAddress = $order->getShippingAddress();
+        $billingAddress = $order->getBillingAddress();
         $transactionData['tax'] = [
             'isTaxable' => $order->getTaxAmount() ? true : false,
-            'taxableCountryCode' => $order->getShippingAddress()->getCountryId(),
+            'taxableCountryCode' => ($shippingAddress) ? $shippingAddress->getCountryId() : $billingAddress->getCountryId(),
             'taxAmount' => (string)($order->getTaxAmount() * 100)
         ];
 
         // Billing Data
-        $billingAddress = $order->getBillingAddress();
         $transactionData['billedPerson'] = [];
         $transactionData['billedPerson']['name'] = [
             'first' => $billingAddress->getFirstname(),
@@ -177,10 +180,8 @@ class Order
         $fulfillmentData['shipping'] = [];
         $fulfillmentData['shipping']['amount'] = (string)($order->getShippingAmount() * 100);
         $shippingMethod = $order->getShippingMethod(true);
-        $fulfillmentData['shipping']['provider'] = $shippingMethod->getData('carrier_code') ?? '';
-        $fulfillmentData['shipping']['method'] = $shippingMethod->getData(
-            'method'
-        ) ? 'STANDARD' : ''; //$shippingMethod->getData('method') ?? '';
+        $fulfillmentData['shipping']['provider'] = $shippingMethod ? ($shippingMethod->getData('carrier_code') ?? '') : '';
+        $fulfillmentData['shipping']['method'] = $shippingMethod && $shippingMethod->getData('method') ? 'STANDARD' : '';
         $fulfillmentData['recipient'] = $this->processShippingInfo($request, $order);
         $fulfillmentData['store'] = $this->processStore($request, $order);
         $request->setData('fulfillment', [$fulfillmentData]);
