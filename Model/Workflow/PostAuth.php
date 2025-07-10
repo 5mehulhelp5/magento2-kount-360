@@ -33,7 +33,7 @@ class PostAuth extends WorkflowAbstract implements WorkflowInterface
         }
 
         $this->logger->info('On Magento Order Fail');
-        $this->logger->info('Order failed, sending update to Kount RIS.');
+        $this->logger->info('Order failed, sending update to Kount RIS via Queue.');
         $this->logger->info('Order Id: ' . $order->getIncrementId());
         $this->logger->info('Order Store Id: ' . $order->getStoreId());
 

@@ -81,6 +81,7 @@ class RisService
         $url = $this->configAccount->getKountOrderEndpoint();
         $inquiryRequest = $inquiryRequest->getData();
         $inquiryResponse = $this->apiClient->post('inquiryRequest', $url, $inquiryRequest);
+        $this->logger->info('Kount 360 POST Response: ' . json_encode($inquiryResponse));
 
         if (!$this->getTransactionId($inquiryResponse)) {
             $this->logger->warning('No transaction_id in response, skipping Update.');
@@ -138,7 +139,8 @@ class RisService
         $updateRequest = $this->updateBuilder->build($order, $ris->getTransactionId());
         $updateRequest = $updateRequest->getData();
         $url = $this->configAccount->getKountOrderEndpoint();
-        $this->apiClient->patch('updateOrder', $url . '/' . $ris->getTransactionId(), $updateRequest);
+        $response = $this->apiClient->patch('updateOrder', $url . '/' . $ris->getTransactionId(), $updateRequest);
+        $this->logger->info('Kount 360 PATCH Response: ' . json_encode($response));
 
         return true;
     }
