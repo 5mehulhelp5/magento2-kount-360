@@ -25,6 +25,7 @@ class Handler
     {
         try {
             // Build the search criteria
+            $this->logger->info('Kount Queue Handler: Order #' . $orderIncrementId . ' processing update call to Kount.');
             $searchCriteria = $this->searchCriteriaBuilder
                 ->addFilter('increment_id', $orderIncrementId, 'eq')
                 ->setPageSize(1) // We only want one result
@@ -35,7 +36,7 @@ class Handler
 
             // Check if the order exists
             if (empty($orderList)) {
-                $this->logger->info('Order #' . $orderIncrementId . ' did not update to Kount. It may not exist, skipping.');
+                $this->logger->info('Order #' . $orderIncrementId . ' did not update to Kount. It may not exist within Magento or an error occurred while fetching it, skipping.');
                 return;
             }
 

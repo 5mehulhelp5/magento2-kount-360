@@ -98,6 +98,7 @@ class ApiClient
             $this->authenticate();
         }
         try {
+            $this->logger->info('Kount 360 POST Request: ' . json_encode($body));
             $response = $this->httpClient->request('POST', $url, [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->accessToken,
@@ -112,6 +113,7 @@ class ApiClient
             return json_decode($response->getBody()->getContents(), true);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 401) {
+                $this->logger->info('Kount 360 POST Authentication error, retrying...');
                 $this->authenticate(true);
                 return $this->post($action, $url, $body);
             }
@@ -138,6 +140,7 @@ class ApiClient
         }
 
         try {
+            $this->logger->info('Kount 360 PATCH Request: ' . json_encode($body));
             $response = $this->httpClient->request('PATCH', $url, [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->accessToken,
@@ -149,6 +152,7 @@ class ApiClient
             return json_decode($response->getBody()->getContents(), true);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 401) {
+                $this->logger->info('Kount 360 PATCH Authentication error, retrying...');
                 $this->authenticate(true);
                 return $this->patch($action, $url, $body);
             }

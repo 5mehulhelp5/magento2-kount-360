@@ -23,10 +23,11 @@ class Authorization
      */
     public function getAccessToken(): ?string
     {
-        if ($this->configAccount->isTestMode()) {
-            $this->scopeConfig->getValue(self::ACCESS_TOKEN_CONFIG_PATH_TEST, ScopeInterface::SCOPE_WEBSITE);
-        }
-        return $this->scopeConfig->getValue(self::ACCESS_TOKEN_CONFIG_PATH_PROD, ScopeInterface::SCOPE_WEBSITE);
+        $path = $this->configAccount->isTestMode()
+            ? self::ACCESS_TOKEN_CONFIG_PATH_TEST
+            : self::ACCESS_TOKEN_CONFIG_PATH_PROD;
+
+        return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_WEBSITE);
     }
 
     /**

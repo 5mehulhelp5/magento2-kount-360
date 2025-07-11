@@ -27,7 +27,9 @@ class Order
         private \Kount\Kount360\Model\Config\Account $configAccount,
         private \Magento\SalesRule\Api\RuleRepositoryInterface $ruleRepository,
         private \Kount\Kount360\Model\Ris\Base\Builder\Session $kountSession,
-        private \Magento\Framework\App\Request\Http $requestHttp
+        private \Magento\Framework\App\Request\Http $requestHttp,
+        private \Kount\Kount360\Helper\Data $kountHelper,
+        private \Magento\Framework\App\ProductMetadataInterface $productMetadata,
     ) {
     }
 
@@ -44,6 +46,7 @@ class Order
         $this->processFulfillment($request, $order);
         $this->processOrderTransactions($request, $order);
         $this->processDiscountInfo($request, $order);
+        $this->processCustomFields($request, $order);
     }
 
 
@@ -338,6 +341,38 @@ class Order
         $ipAddress = $this->isBackend($ipAddress) ? self::LOCAL_IP : $ipAddress;
         $request->setData('userIp', $ipAddress);
     }
+
+    /**
+     * @param \Magento\Framework\DataObject $request
+     * @param \Magento\Sales\Api\Data\OrderInterface $order
+     * @return void
+     */
+    protected function processCustomFields(DataObject $request, OrderInterface $order): void
+    {
+        $customFields = [];
+        if (!empty($request->getData('promotions'))) {
+            $descriptions = [];
+            foreach ($request->getData('promotions') as $promotion) {
+                $descriptions[] = $promotion['description'];
+            }
+            $customFields['COUPON_CODE'] = implode(',', $descriptions);
+        }
+
+        $shippingMethod = $order->getShippingMethod(true);
+        if (is_object($shippingMethod)) {
+            $customFields['CARRIER'] = $shippingMethod->getData('carrier_code') ?? '';
+            $customFields['METHOD'] = $shippingMethod->getData('method') ?? '';
+        } else {
+            $customFields['CARRIER'] = '';
+            $customFields['METHOD'] = '';
+        }
+        $customFields['EXT'] = $this->kountHelper->getModuleVersion();
+        $store = $order->getStore();
+        $customFields['ACCOUNT_NAME'] = $store->getBaseUrl() ?? 'MAGENTO';
+        $customFields['PLATFORM'] = 'Adobe Commerce ' . $this->productMetadata->getEdition() . ':' . $this->productMetadata->getVersion();
+        $request->setData('customFields', $customFields);
+    }
+
 
     /**
      * @param $ipAddress
