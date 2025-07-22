@@ -45,18 +45,25 @@ class Index extends Action implements \Magento\Framework\App\CsrfAwareActionInte
                 );
             }
 
-            // Read the raw input and decode JSON
             $rawInput = file_get_contents('php://input');
-            $jsonData = json_decode($rawInput, true); // true converts it into an associative array
+            $this->logger->debug(__('Raw JSON Input: %1', $rawInput));
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new LocalizedException(__('Invalid JSON data received.'));
+            if (empty($rawInput)) {
+                throw new LocalizedException(__('ENS Update Failed: No data received.'));
             }
 
-            // Log the received JSON for debugging
-            $this->logger->info('Received JSON Data: ' . json_encode($jsonData));
+            $jsonData = json_decode($rawInput, true);
 
-            // Process the JSON data
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new LocalizedException(__('ENS Update Failed: Invalid JSON data received. Error: %1', [json_last_error_msg()]));
+            }
+
+            if (!is_array($jsonData)) {
+                throw new LocalizedException(__('ENS Update Failed: Decoded JSON is not an array.'));
+            }
+
+            $this->logger->info('Validated Received JSON Data: %1', [json_encode($jsonData)]);
+
             $this->respondOnReceiptOfEvents();
             $response = $this->ensManager->handleRequest($jsonData);
             $this->logger->info($response);
