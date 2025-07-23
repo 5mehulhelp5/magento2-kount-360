@@ -26,7 +26,7 @@
                 </tr>
                 <tr>
                     <td class="label"><label><?= $block->escapeHtml(__('Rules Triggered')) ?></label></td>
-                    <td class="value"><strong><?= nl2br($block->escapeHtml(__($block->getRisRules()))) ?></strong></td>
+                    <td class="value"><strong><?= $escaper->escapeHtml($block->getRisRules()) ?></strong></td>
                 </tr>
                 <tr>
                     <td class="label"><label><?= $block->escapeHtml(__('Transaction ID')) ?></label></td>
@@ -45,7 +45,7 @@
                     <td class="value"><strong><?= $block->escapeHtml($block->getRisCountry()) ?></strong></td>
                 </tr>
                 <tr>
-                    <td class="label"><label><?= __($block->escapeHtml('Data Collector Present')) ?></label></td>
+                    <td class="label"><label><?= $block->escapeHtml(__('Data Collector Present')) ?></label></td>
                     <td class="value"><strong><?= $block->escapeHtml($block->getRisKaptcha()) ?></strong></td>
                 </tr>
                 <tr>
