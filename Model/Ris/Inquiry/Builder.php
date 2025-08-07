@@ -35,10 +35,6 @@ class Builder
      */
     protected $orderBuilder;
 
-    /**
-     * @var \Kount\Kount360\Model\Ris\Base\Builder\PaymentInterface
-     */
-    protected $paymentBuilder;
 
     /**
      * @param \Kount\Kount360\Model\Ris\InquiryFactory $inquiryFactory
@@ -46,22 +42,20 @@ class Builder
      * @param \Kount\Kount360\Model\Ris\Inquiry\Builder\VersionInfo $versionBuilder
      * @param \Kount\Kount360\Model\Ris\Base\Builder\Session $sessionBuilder
      * @param \Kount\Kount360\Model\Ris\Inquiry\Builder\Order $orderBuilder
-     * @param \Kount\Kount360\Model\Ris\Base\Builder\PaymentInterface $paymentBuilder
+
      */
     public function __construct(
         \Kount\Kount360\Model\Ris\InquiryFactory $inquiryFactory,
         \Kount\Kount360\Model\Config\Account $configAccount,
         \Kount\Kount360\Model\Ris\Inquiry\Builder\VersionInfo $versionBuilder,
         \Kount\Kount360\Model\Ris\Base\Builder\Session $sessionBuilder,
-        \Kount\Kount360\Model\Ris\Inquiry\Builder\Order $orderBuilder,
-        \Kount\Kount360\Model\Ris\Base\Builder\PaymentInterface $paymentBuilder
+        \Kount\Kount360\Model\Ris\Inquiry\Builder\Order $orderBuilder
     ) {
         $this->inquiryFactory = $inquiryFactory;
         $this->configAccount = $configAccount;
         $this->versionBuilder = $versionBuilder;
         $this->sessionBuilder = $sessionBuilder;
         $this->orderBuilder = $orderBuilder;
-        $this->paymentBuilder = $paymentBuilder;
     }
 
     /**

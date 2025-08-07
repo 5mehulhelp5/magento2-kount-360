@@ -30,6 +30,7 @@ class Order
         private \Magento\Framework\App\Request\Http $requestHttp,
         private \Kount\Kount360\Helper\Data $kountHelper,
         private \Magento\Framework\App\ProductMetadataInterface $productMetadata,
+        private \Kount\Kount360\Model\Ris\Inquiry\Builder\Payment\Type $paymentType
     ) {
     }
 
@@ -100,17 +101,16 @@ class Order
     {
         $transactionData = [];
         // Payment Data
-        //if ($order->getPayment()->getEntityId()) {
-            $transactionData['merchantTransactionId'] = $order->getPayment()->getLastTransId() ?? '';
-            $transactionData['processor'] = $order->getPayment()->getMethodInstance()->getTitle();
-            $transactionData['processorMerchantId'] = '';
-            $transactionData['payment'] = [
-                'type' => $order->getPayment()->getMethodInstance()->getCode() ?? '',
-                'paymentToken' => '',
-                'bin' => '',
-                'last4' => $order->getPayment()->getCcLast4() ?? ''
-            ];
-        //}
+        $transactionData['merchantTransactionId'] = $order->getPayment()->getLastTransId() ?? '';
+        $transactionData['processor'] = $order->getPayment()->getMethodInstance()->getTitle();
+        $transactionData['processorMerchantId'] = '';
+        $paymentCode = $order->getPayment()->getMethodInstance()->getCode() ?? '';
+        $transactionData['payment'] = [
+            'type' => $this->paymentType->getPaymentType($paymentCode),
+            'paymentToken' => '',
+            'bin' => '',
+            'last4' => $order->getPayment()->getCcLast4() ?? ''
+        ];
 
         // Totals Data
         $transactionData['subtotal'] = (string)($order->getSubtotal() * 100);
