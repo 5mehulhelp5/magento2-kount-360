@@ -55,7 +55,7 @@ class ApiClient
         }
 
         try {
-            $response = $this->httpClient->request('POST', $authUrl, [
+            $authenticationRequest = [
                 'headers' => [
                     'Authorization' => 'Basic' . $this->configAccount->getApiKey(),
                     'Content-Type' => 'application/x-www-form-urlencoded',
@@ -64,12 +64,13 @@ class ApiClient
                     'grant_type' => 'client_credentials',
                     'scope' => 'k1_integration_api',
                 ],
-            ]);
-
+            ];
+            $this->logger->info('Kount Authentication Request Initiated');
+            $response = $this->httpClient->request('POST', $authUrl, $authenticationRequest);
             $data = json_decode($response->getBody()->getContents(), true);
-
+            $this->logger->info('Kount Authentication Response Received');
             if (!isset($data['access_token'])) {
-                throw new \Exception('Kount Authentication failed. Check error logs for details');
+                throw new \Exception('Kount Authentication failed. Access token not found in response. Response: '. json_encode($data));
             }
 
             $this->accessToken = $data['access_token'];
@@ -124,7 +125,7 @@ class ApiClient
             } else {
                 $this->logger->error('Kount 360 Error: No response received from the server.');
             }
-            throw new \Exception('Kount 360 Authentication error');
+            throw new \Exception('Kount 360 Authentication error: ' . $e->getMessage());
 
         } catch (GuzzleException $e) {
             $this->logger->error('POST request failed during action ' . $action . ': ' . $e->getMessage());
@@ -162,7 +163,7 @@ class ApiClient
             } else {
                 $this->logger->error('Kount 360 Error: No response received from the server.');
             }
-            throw new \Exception('Kount 360 Authentication error');
+            throw new \Exception('Kount 360 Authentication error: ' . $e->getMessage());
         }
         catch (GuzzleException $e) {
             if ($e->hasResponse()) {
