@@ -83,7 +83,7 @@ class Order
     protected function processAccountData(DataObject $request, OrderInterface $order): void
     {
         $accountData = [];
-        $accountData['id'] = $order->getIncrementId();
+        $accountData['id'] = $order->getCustomerEmail();
         $accountData['type'] = (string)$order->getCustomerGroupId();
         $now = $this->getCurrentTime();
         $accountData['creationDateTime'] = $now;
