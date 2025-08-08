@@ -54,7 +54,7 @@ class PreAuth extends WorkflowAbstract implements WorkflowInterface
     public function success(Order $order)
     {
         $this->logger->info('After Magento Order Placement');
-        $this->logger->info('Order succeeded, sending update to Kount RIS via Queue.');
+        $this->logger->info('Sending update to Kount RIS via Queue.');
         $this->logger->info('Order Id: ' . $order->getIncrementId());
         $this->logger->info('Order Store Id: ' . $order->getStoreId());
 
