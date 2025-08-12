@@ -36,7 +36,7 @@ class PostAuth extends WorkflowAbstract implements WorkflowInterface
         $this->logger->info('Order failed, sending update to Kount RIS via Queue.');
         $this->logger->info('Order Id: ' . $order->getIncrementId());
         $this->logger->info('Order Store Id: ' . $order->getStoreId());
-
+        $this->dataPersistor->set('kount_post_auth_failure', true);
         $this->risService->inquiryRequest($order, true, RisService::AUTH_DECLINED, RisService::MACK_NO);
     }
 

@@ -43,8 +43,12 @@ class PreAuth extends WorkflowAbstract implements WorkflowInterface
         $this->logger->info('Order failed, sending update to Kount RIS via Queue.');
         $this->logger->info('Order Id: ' . $order->getIncrementId());
         $this->logger->info('Order Store Id: ' . $order->getStoreId());
-        $this->publisher->publish('kount.orderupdate', $order->getIncrementId());
-        //$this->risService->updateRequest($order, true);
+        $risTransactionId = $this->dataPersistor->get('kount_ris_transaction_id');
+        if ($risTransactionId) {
+            $this->risService->updateRealTimeRequest($order, $risTransactionId);
+        } else {
+            $this->publisher->publish('kount.orderupdate', $order->getIncrementId());
+        }
     }
 
     /**

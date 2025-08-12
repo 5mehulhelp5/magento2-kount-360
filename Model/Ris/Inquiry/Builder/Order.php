@@ -30,7 +30,8 @@ class Order
         private \Magento\Framework\App\Request\Http $requestHttp,
         private \Kount\Kount360\Helper\Data $kountHelper,
         private \Magento\Framework\App\ProductMetadataInterface $productMetadata,
-        private \Kount\Kount360\Model\Ris\Inquiry\Builder\Payment\Type $paymentType
+        private \Kount\Kount360\Model\Ris\Inquiry\Builder\Payment\Type $paymentType,
+        private \Magento\Framework\App\Request\DataPersistorInterface $dataPersistor
     ) {
     }
 
@@ -51,11 +52,11 @@ class Order
     }
 
 
-    public function processUpdate(DataObject $request, $risTransactionId, OrderInterface $order): void
+    public function processUpdate(DataObject $request, $risTransactionId, OrderInterface $order, $realTimeDecline = false): void
     {
         $this->processGeneralInfo($request, $order);
         $this->processAccountData($request, $order);
-        $this->processOrderTransactions($request, $order, $risTransactionId);
+        $this->processOrderTransactions($request, $order, $risTransactionId, $realTimeDecline);
     }
 
     /**
@@ -97,7 +98,7 @@ class Order
      * @param OrderInterface $order
      * @return void
      */
-    protected function processOrderTransactions(DataObject $request, OrderInterface $order, $risTransactionId = null): void
+    protected function processOrderTransactions(DataObject $request, OrderInterface $order, $risTransactionId = null, $realTimeDecline = false): void
     {
         $transactionData = [];
         // Payment Data
@@ -146,9 +147,13 @@ class Order
             'postalCode' => $billingAddress->getPostcode()
         ];
 
-        $transactionData['transactionStatus'] = $order->getPayment()->getEntityId() ? 'CAPTURED' : 'PENDING';
+        if ($this->dataPersistor->get('kount_post_auth_failure')) {
+            $realTimeDecline = true;
+        }
+
+        $transactionData['transactionStatus'] = $realTimeDecline ? 'REFUSED' : ($order->getPayment()->getEntityId() ? 'CAPTURED' : 'PENDING');
         $transactionData['authorizationStatus'] = [
-            'authResult' => $order->getPayment()->getEntityId() ? 'Approved' : 'Unknown'
+            'authResult' => $realTimeDecline ? 'DECLINED' : ($order->getPayment()->getEntityId() ? 'APPROVED' : 'UNKNOWN')
         ];
 
         if ($risTransactionId) {
