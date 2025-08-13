@@ -30,7 +30,8 @@ class Order
         private \Magento\Framework\App\Request\Http $requestHttp,
         private \Kount\Kount360\Helper\Data $kountHelper,
         private \Magento\Framework\App\ProductMetadataInterface $productMetadata,
-        private \Kount\Kount360\Model\Ris\Inquiry\Builder\Payment\Type $paymentType
+        private \Kount\Kount360\Model\Ris\Inquiry\Builder\Payment\Type $paymentType,
+        private \Magento\Framework\App\Request\DataPersistorInterface $dataPersistor
     ) {
     }
 
@@ -51,11 +52,11 @@ class Order
     }
 
 
-    public function processUpdate(DataObject $request, $risTransactionId, OrderInterface $order): void
+    public function processUpdate(DataObject $request, $risTransactionId, OrderInterface $order, $realTimeDecline = false): void
     {
         $this->processGeneralInfo($request, $order);
         $this->processAccountData($request, $order);
-        $this->processOrderTransactions($request, $order, $risTransactionId);
+        $this->processOrderTransactions($request, $order, $risTransactionId, $realTimeDecline);
     }
 
     /**
@@ -97,7 +98,7 @@ class Order
      * @param OrderInterface $order
      * @return void
      */
-    protected function processOrderTransactions(DataObject $request, OrderInterface $order, $risTransactionId = null): void
+    protected function processOrderTransactions(DataObject $request, OrderInterface $order, $risTransactionId = null, $realTimeDecline = false): void
     {
         $transactionData = [];
         // Payment Data
@@ -113,9 +114,9 @@ class Order
         ];
 
         // Totals Data
-        $transactionData['subtotal'] = (string)($order->getSubtotal() * 100);
+        $transactionData['subtotal'] = (string)round($order->getSubtotal() * 100);
         $currency = $this->configAccount->getCurrency();
-        $transactionData['orderTotal'] = (string) ($order->getBaseGrandTotal() * 100);
+        $transactionData['orderTotal'] = (string) round($order->getBaseGrandTotal() * 100);
         $transactionData['currency'] = $currency;
 
         // Get Addresses
@@ -124,7 +125,7 @@ class Order
         $transactionData['tax'] = [
             'isTaxable' => $order->getTaxAmount() ? true : false,
             'taxableCountryCode' => ($shippingAddress) ? $shippingAddress->getCountryId() : $billingAddress->getCountryId(),
-            'taxAmount' => (string)($order->getTaxAmount() * 100)
+            'taxAmount' => (string)round($order->getTaxAmount() * 100)
         ];
 
         // Billing Data
@@ -146,9 +147,13 @@ class Order
             'postalCode' => $billingAddress->getPostcode()
         ];
 
-        $transactionData['transactionStatus'] = $order->getPayment()->getEntityId() ? 'CAPTURED' : 'PENDING';
+        if ($this->dataPersistor->get('kount_post_auth_failure')) {
+            $realTimeDecline = true;
+        }
+
+        $transactionData['transactionStatus'] = $realTimeDecline ? 'REFUSED' : ($order->getPayment()->getEntityId() ? 'CAPTURED' : 'PENDING');
         $transactionData['authorizationStatus'] = [
-            'authResult' => $order->getPayment()->getEntityId() ? 'Approved' : 'Unknown'
+            'authResult' => $realTimeDecline ? 'DECLINED' : ($order->getPayment()->getEntityId() ? 'APPROVED' : 'UNKNOWN')
         ];
 
         if ($risTransactionId) {
@@ -181,7 +186,7 @@ class Order
         $fulfillmentData = [];
         $fulfillmentData['type'] = 'SHIPPED';
         $fulfillmentData['shipping'] = [];
-        $fulfillmentData['shipping']['amount'] = (string)($order->getShippingAmount() * 100);
+        $fulfillmentData['shipping']['amount'] = (string)round($order->getShippingAmount() * 100);
         $shippingMethod = $order->getShippingMethod(true);
         $fulfillmentData['shipping']['provider'] = $shippingMethod ? ($shippingMethod->getData('carrier_code') ?? '') : '';
         $fulfillmentData['shipping']['method'] = $shippingMethod && $shippingMethod->getData('method') ? 'STANDARD' : '';
@@ -247,7 +252,7 @@ class Order
             }
         }
 
-        return (string)($discountAmount * 100);
+        return (string)round($discountAmount * 100);
     }
 
     /**
@@ -317,7 +322,7 @@ class Order
             $productName = $realOrderItem->getName() ?? $realOrderItem->getSku();
             $cart[] = [
                 'id' => $realOrderItem->getQuoteItemId() ?? $realOrderItem->getId(),
-                'price' => (string)($realOrderItem->getPrice() * 100),
+                'price' => (string)round($realOrderItem->getPrice() * 100),
                 'description' => ($realOrderItem->getDescription() ? $realOrderItem->getDescription() : $productName),
                 'name' => $productName,
                 'quantity' => round($realOrderItem->getQtyOrdered()),

@@ -18,13 +18,14 @@ class Builder
 
     /**
      * @param \Magento\Sales\Model\Order $order
-     * @param string $risTransactionId
-     * @return \Magento\Framework\DataObject
+     * @param mixed $risTransactionId
+     * @param mixed $realTimeDecline
+     * @return DataObject
      */
-    public function build(Order $order, $risTransactionId): DataObject
+    public function build(Order $order, $risTransactionId, $realTimeDecline = false): DataObject
     {
         $updateRequest = $this->updateFactory->create($order->getStore()->getWebsiteId());
-        $this->orderBuilder->processUpdate($updateRequest, $risTransactionId, $order);
+        $this->orderBuilder->processUpdate($updateRequest, $risTransactionId, $order, $realTimeDecline);
         return $updateRequest;
     }
 }

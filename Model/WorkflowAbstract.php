@@ -17,6 +17,7 @@ abstract class WorkflowAbstract implements WorkflowInterface
         protected \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         protected \Magento\Framework\MessageQueue\PublisherInterface $publisher,
         protected \Kount\Kount360\Model\Logger $logger,
+        protected \Magento\Framework\App\Request\DataPersistorInterface $dataPersistor
     ) {
 
     }

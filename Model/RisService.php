@@ -29,7 +29,8 @@ class RisService
         private \Kount\Kount360\Model\Logger $logger,
         private \Magento\Framework\App\State $state,
         private \Kount\Kount360\Model\Config\Account $configAccount,
-        private \Magento\Framework\Serialize\Serializer\Json $serializerJson
+        private \Magento\Framework\Serialize\Serializer\Json $serializerJson,
+        private \Magento\Framework\App\Request\DataPersistorInterface $dataPersistor
     ) {
 
     }
@@ -82,8 +83,8 @@ class RisService
         $inquiryRequest = $inquiryRequest->getData();
         $inquiryResponse = $this->apiClient->post('inquiryRequest', $url, $inquiryRequest);
         $this->logger->info('Kount 360 POST Response: ' . json_encode($inquiryResponse));
-
-        if (!$this->getTransactionId($inquiryResponse)) {
+        $transactionId = $this->getTransactionId($inquiryResponse);
+        if (!$transactionId) {
             $this->logger->warning('No transaction_id in response, skipping Update.');
             return false;
         }
@@ -91,7 +92,7 @@ class RisService
         if (!$graceful && $this->parseResponseForAction($inquiryResponse) === RisService::AUTO_DECLINE) {
             throw new LocalizedException(__('Payment authorization rejection from the processor.'));
         }
-
+        $this->dataPersistor->set('kount_ris_transaction_id', $transactionId);
 
         $this->orderRis->updateRis($order, $inquiryResponse);
         return true;
@@ -140,6 +141,18 @@ class RisService
         $updateRequest = $updateRequest->getData();
         $url = $this->configAccount->getKountOrderEndpoint();
         $response = $this->apiClient->patch('updateOrder', $url . '/' . $ris->getTransactionId(), $updateRequest);
+        $this->logger->info('Kount 360 PATCH Response: ' . json_encode($response));
+
+        return true;
+    }
+
+    
+    public function updateRealTimeRequest(Order $order, $risTransactionId): bool
+    {
+        $updateRequest = $this->updateBuilder->build($order, $risTransactionId, true);
+        $updateRequest = $updateRequest->getData();
+        $url = $this->configAccount->getKountOrderEndpoint();
+        $response = $this->apiClient->patch('updateOrder', $url . '/' . $risTransactionId, $updateRequest);
         $this->logger->info('Kount 360 PATCH Response: ' . json_encode($response));
 
         return true;
