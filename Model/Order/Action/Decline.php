@@ -46,8 +46,9 @@ class Decline implements ActionInterface
                 $isProcessed = $this->cancel($order);
             } catch (\Throwable $e) {
                 if ($isInPaymentWorkflow) {
-                    $this->messageManager->addErrorMessage(__('Your order was declined. Please try again or contact support.'));
-                    throw $e;
+                    throw new \Magento\Framework\Exception\AuthorizationException(
+                        __('Your order was declined. Please try again or contact support.')
+                    );
                 }
             }
         }
