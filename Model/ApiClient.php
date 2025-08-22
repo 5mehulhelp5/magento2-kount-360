@@ -128,6 +128,13 @@ class ApiClient
             throw new \Exception('Kount 360 Authentication error: ' . $e->getMessage());
 
         } catch (GuzzleException $e) {
+            if ($e->getResponse()->getStatusCode() === 500) {
+                $responseBody = $e->getMessage();
+                if (stripos($responseBody, 'invalid token') !== false || stripos($payload, '401') !== false) {
+                    $this->authenticate(true);
+                    return $this->post($action, $url, $body);
+                }
+            }
             $this->logger->error('POST request failed during action ' . $action . ': ' . $e->getMessage());
             throw new \Exception('Kount 360 Failed to Update during  ' . $action);
         }
