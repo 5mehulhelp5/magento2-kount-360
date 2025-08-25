@@ -130,7 +130,8 @@ class ApiClient
         } catch (GuzzleException $e) {
             if ($e->getResponse()->getStatusCode() === 500) {
                 $responseBody = $e->getMessage();
-                if (stripos($responseBody, 'invalid token') !== false || stripos($payload, '401') !== false) {
+                if (stripos($responseBody, 'invalid token') !== false || stripos($responseBody, '401') !== false) {
+                    $this->logger->info('Kount 360 401.04 Authentication error, retrying...');
                     $this->authenticate(true);
                     return $this->post($action, $url, $body);
                 }
