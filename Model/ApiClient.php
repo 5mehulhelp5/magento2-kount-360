@@ -174,6 +174,14 @@ class ApiClient
             throw new \Exception('Kount 360 Authentication error: ' . $e->getMessage());
         }
         catch (GuzzleException $e) {
+            if ($e->getResponse()->getStatusCode() === 500) {
+                $responseBody = $e->getMessage();
+                if (stripos($responseBody, 'invalid token') !== false || stripos($responseBody, '401') !== false) {
+                    $this->logger->info('Kount 360 401.04 Authentication error, retrying...');
+                    $this->authenticate(true);
+                    return $this->patch($action, $url, $body);
+                }
+            }
             if ($e->hasResponse()) {
                 $responseBody = $e->getResponse()->getBody()->getContents();
                 $this->logger->error('Kount 360 Full Request: ' . json_encode($body));
