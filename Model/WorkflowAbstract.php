@@ -35,7 +35,8 @@ abstract class WorkflowAbstract implements WorkflowInterface
                 $this->orderActionFactory->create(OrderActionFactory::REVIEW)->process($order);
                 break;
         }
-
-        $this->orderRepository->save($order);
+        if ($order->getId()) {
+            $this->orderRepository->save($order);
+        }
     }
 }
