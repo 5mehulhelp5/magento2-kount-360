@@ -24,7 +24,11 @@ class Workflow
      */
     public function isProcessable($order): bool
     {
-        $paymentMethodCode = $order->getPayment()->getMethod();
+        $paymentMethodCode = $order->getPayment()?->getMethod();
+        if (!$paymentMethodCode) {
+            $this->logger->info('No payment object is available on the order, workflow not processable.');
+            return false;
+        }
         $websiteId = $order->getStore()->getWebsiteId();
 
         if (!$this->configAccount->isAvailable($websiteId)) {
