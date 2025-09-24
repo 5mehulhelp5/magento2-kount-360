@@ -6,8 +6,9 @@
 namespace Kount\Kount360\Model\Order;
 
 use Kount\Kount360\Api\Data\RisInterface;
-use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Sales\Api\Data\OrderInterface;
+
 
 class Ris
 {
@@ -17,14 +18,16 @@ class Ris
     /**
      * @param \Kount\Kount360\Api\Data\RisInterfaceFactory $risFactory
      * @param \Magento\Sales\Api\Data\OrderExtensionFactory $orderExtensionFactory
-     * @param \Kount\Kount360\Api\RisRepository $risRepository
+     * @param \Kount\Kount360\Api\RisRepositoryInterface $risRepository
      * @param \Kount\Kount360\Model\Logger $logger
+     * @param \Magento\Framework\App\ResourceConnection $resource
      */
     public function __construct(
         protected \Kount\Kount360\Api\Data\RisInterfaceFactory $risFactory,
         protected \Magento\Sales\Api\Data\OrderExtensionFactory $orderExtensionFactory,
         protected \Kount\Kount360\Api\RisRepositoryInterface $risRepository,
-        protected \Kount\Kount360\Model\Logger $logger
+        protected \Kount\Kount360\Model\Logger $logger,
+        protected \Magento\Framework\App\ResourceConnection $resource
     ) {
     }
 
@@ -36,11 +39,14 @@ class Ris
     {
         $extensionAttributes = $this->retrieveOrderExtensionAttributes($order);
         $ris = $extensionAttributes->getKountRis();
+
         if (empty($ris)) {
             try {
                 $ris = $this->risRepository->getByOrderId((int)$order->getEntityId());
             } catch (NoSuchEntityException $e) {
                 $ris = $this->risFactory->create();
+                //fallback to kount_ris table
+                $this->fallbackToKountRisTable($ris, $order);
             }
             $extensionAttributes->setKountRis($ris);
         }
@@ -153,7 +159,6 @@ class Ris
         $this->logger->info('Mobile Type: ' . $ris->getMobileType());
     }
 
-
     /**
      * @param array $response
      * @return string
@@ -171,5 +176,27 @@ class Ris
         }
 
         return $rules;
+    }
+
+    /**
+     * @param \Kount\Kount360\Api\Data\RisInterface $ris
+     * @param \Magento\Sales\Api\Data\OrderInterface $order
+     * @return void
+     */
+    private function fallbackToKountRisTable(\Kount\Kount360\Api\Data\RisInterface $ris, OrderInterface $order): void
+    {
+        $connection = $this->resource->getConnection();
+        $fullTableName = $this->resource->getTableName('kount_ris');
+
+        if ($connection->isTableExists($fullTableName)) {
+            $select = $connection->select()
+                ->from($fullTableName)
+                ->where('order_id = ?', (int)$order->getEntityId()) // safe binding
+                ->limit(1);
+            $row = $connection->fetchRow($select);
+            if ($row) {
+                $ris->setData($row);
+            }
+        }
     }
 }
