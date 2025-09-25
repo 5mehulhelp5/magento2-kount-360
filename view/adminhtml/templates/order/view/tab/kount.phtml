@@ -5,6 +5,7 @@
  */
 
 /** @var $block \Kount\Kount360\Block\Adminhtml\Order\View\Tab\Kount */
+/** @var $escaper \Magento\Framework\Escaper */
 ?>
 <div class="entry-edit">
     <div class="entry-edit-head">
@@ -31,8 +32,16 @@
                 <tr>
                     <td class="label"><label><?= $block->escapeHtml(__('Transaction ID')) ?></label></td>
                     <td class="value">
-                        <?php if ($block->getRisTransactionId()): ?>
-                            <strong><a href="<?= $block->escapeHtmlAttr($block->getAWCUrl()) ?>" target="_blank"><?= $block->escapeHtml($block->getRisTransactionId()) ?></a></strong>
+                        <?php if ($block->getRisTransactionId() && !$block->allowRisLink()): ?>
+                            <strong>
+                                <?php if($block->allowRisLink()): ?>
+                                    <a href="<?= $block->escapeHtmlAttr($block->getAWCUrl()) ?>" target="_blank">
+                                <?php endif; ?>
+                                    <?= $block->escapeHtml($block->getRisTransactionId()) ?>
+                                <?php if($block->allowRisLink()): ?>
+                                    </a>
+                                <?php endif; ?>
+                            </strong>
                         <?php endif; ?>
                     </td>
                 </tr>

@@ -196,6 +196,7 @@ class Ris
             $row = $connection->fetchRow($select);
             if ($row) {
                 $ris->setData($row);
+                $ris->setData('avoid_link', true);
             }
         }
     }

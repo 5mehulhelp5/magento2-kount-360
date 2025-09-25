@@ -54,7 +54,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getRisScore()
     {
-        return $this->ris->getScore() ? : __('N/A');
+        return $this->ris->getScore() ?: __('N/A');
     }
 
     /**
@@ -85,7 +85,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getRisDescription()
     {
-        return $this->ris->getDescription() ? : __('N/A');
+        return $this->ris->getDescription() ?: __('N/A');
     }
 
     /**
@@ -93,7 +93,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getRisRules()
     {
-        return $this->ris->getRule() ? : __('N/A');
+        return $this->ris->getRule() ?: __('N/A');
     }
 
     /**
@@ -105,12 +105,20 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
     }
 
     /**
+     * @return bool
+     */
+    public function allowRisLink(): bool
+    {
+        return !$this->ris->getData('avoid_link');
+    }
+
+    /**
      * @return string
      */
     public function getAWCUrl()
     {
         return $this->configAccount->getAwcUrl($this->getOrder()->getStore()->getWebsiteId())
-        . '/event-analysis/order/' . $this->getRisTransactionId();
+            . '/event-analysis/order/' . $this->getRisTransactionId();
     }
 
     /**
@@ -118,7 +126,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getRisGeox()
     {
-        return $this->ris->getGeox() ? : __('N/A');
+        return $this->ris->getGeox() ?: __('N/A');
     }
 
     /**
@@ -126,7 +134,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getRisCountry()
     {
-        return $this->ris->getCountry() ? : __('N/A');
+        return $this->ris->getCountry() ?: __('N/A');
     }
 
     /**
@@ -134,7 +142,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getRisKaptcha()
     {
-        return $this->ris->getKaptcha() ? : __('N/A');
+        return $this->ris->getKaptcha() ?: __('N/A');
     }
 
     /**
@@ -142,7 +150,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getRisCards()
     {
-        return $this->ris->getCards() ? : __('N/A');
+        return $this->ris->getCards() ?: __('N/A');
     }
 
     /**
@@ -150,7 +158,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getRisEmails()
     {
-        return $this->ris->getEmails() ? : __('N/A');
+        return $this->ris->getEmails() ?: __('N/A');
     }
 
     /**
@@ -158,7 +166,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getRisDevices()
     {
-        return $this->ris->getDevices() ? : __('N/A');
+        return $this->ris->getDevices() ?: __('N/A');
     }
 
     /**
@@ -166,7 +174,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getOmniscore()
     {
-        return $this->ris->getOmniscore() ? : __('N/A');
+        return $this->ris->getOmniscore() ?: __('N/A');
     }
 
     /**
@@ -174,7 +182,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getIpAddress()
     {
-        return $this->ris->getIpAddress() ? : __('N/A');
+        return $this->ris->getIpAddress() ?: __('N/A');
     }
 
     /**
@@ -182,7 +190,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getIpCity()
     {
-        return $this->ris->getIpCity() ? : __('N/A');
+        return $this->ris->getIpCity() ?: __('N/A');
     }
 
     /**
@@ -190,7 +198,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getNetw()
     {
-        return $this->ris->getNetw() ? : __('N/A');
+        return $this->ris->getNetw() ?: __('N/A');
     }
 
     /**
@@ -198,7 +206,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getMobileDevice()
     {
-        return $this->ris->getMobileDevice() ? : __('N');
+        return $this->ris->getMobileDevice() ?: __('N');
     }
 
     /**
@@ -206,7 +214,7 @@ class Kount extends \Magento\Backend\Block\Template implements \Magento\Backend\
      */
     public function getMobileType()
     {
-        return $this->ris->getMobileType() ? : __('N/A');
+        return $this->ris->getMobileType() ?: __('N/A');
     }
 
     /**
