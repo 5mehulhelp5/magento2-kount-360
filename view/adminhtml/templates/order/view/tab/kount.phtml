@@ -32,14 +32,12 @@
                 <tr>
                     <td class="label"><label><?= $block->escapeHtml(__('Transaction ID')) ?></label></td>
                     <td class="value">
-                        <?php if ($block->getRisTransactionId() && !$block->allowRisLink()): ?>
+                        <?php if ($block->getRisTransactionId()): ?>
                             <strong>
-                                <?php if($block->allowRisLink()): ?>
-                                    <a href="<?= $block->escapeHtmlAttr($block->getAWCUrl()) ?>" target="_blank">
-                                <?php endif; ?>
+                                <?php if ($block->allowRisLink()): ?>
+                                    <a href="<?= $block->escapeHtmlAttr($block->getAWCUrl()) ?>" target="_blank"><?= $block->escapeHtml($block->getRisTransactionId()) ?></a>
+                                <?php else: ?>
                                     <?= $block->escapeHtml($block->getRisTransactionId()) ?>
-                                <?php if($block->allowRisLink()): ?>
-                                    </a>
                                 <?php endif; ?>
                             </strong>
                         <?php endif; ?>
