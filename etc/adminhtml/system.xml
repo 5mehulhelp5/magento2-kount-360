@@ -98,6 +98,16 @@
                     </depends>
                 </field>
 
+                <field id="refund_post_auth_message" translate="label" type="note" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label></label>
+                    <comment><![CDATA[<div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; border-radius: 4px; color: #856404; margin-top: 10px;"><strong>Notice:</strong> When using Refund action with Post-Authorization workflow, ensure your payment method is configured for Authorize and Capture mode to properly process refunds. An invoice is required to process any refunds. If your payment method does not create invoices, this will not work properly</div>]]></comment>
+                    <depends>
+                        <field id="kount360/account/enabled">1</field>
+                        <field id="decline_action">refund</field>
+                        <field id="workflow_mode">post_auth</field>
+                    </depends>
+                </field>
+
                 <field id="prevent_resetting_order_status" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Prevent Resetting of Order Status</label>
                     <comment>Prevent resetting of order status on 'payment review' and 'fraud' by payment method.</comment>

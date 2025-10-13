@@ -102,7 +102,7 @@ class Order
     {
         $transactionData = [];
         // Payment Data
-        $transactionData['merchantTransactionId'] = $order->getPayment()->getLastTransId() ?? '';
+        $transactionData['merchantTransactionId'] = (string)($order->getPayment()->getLastTransId() ?? '');
         $transactionData['processor'] = $order->getPayment()->getMethodInstance()->getTitle();
         $transactionData['processorMerchantId'] = '';
         $paymentCode = $order->getPayment()->getMethodInstance()->getCode() ?? '';
@@ -110,7 +110,7 @@ class Order
             'type' => $this->paymentType->getPaymentType($paymentCode),
             'paymentToken' => '',
             'bin' => '',
-            'last4' => $order->getPayment()->getCcLast4() ?? ''
+            'last4' => (string)($order->getPayment()->getCcLast4() ?? '')
         ];
 
         // Totals Data
