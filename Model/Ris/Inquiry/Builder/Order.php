@@ -54,7 +54,7 @@ class Order
 
     public function processUpdate(DataObject $request, $risTransactionId, OrderInterface $order, $realTimeDecline = false): void
     {
-        $this->processGeneralInfo($request, $order);
+        $this->processGeneralInfo($request, $order, true);
         $this->processAccountData($request, $order);
         $this->processOrderTransactions($request, $order, $risTransactionId, $realTimeDecline);
     }
@@ -62,15 +62,18 @@ class Order
     /**
      * @param DataObject $request
      * @param OrderInterface $order
+     * @param bool $order
      * @return void
      */
-    protected function processGeneralInfo(DataObject $request, OrderInterface $order): void
+    protected function processGeneralInfo(DataObject $request, OrderInterface $order, bool $updateRequest = false): void
     {
         $request->setData('merchantOrderId', $order->getIncrementId());
         $storeInformation = $this->configAccount->getStoreInformation();
         $store = $order->getStore();
         $request->setData('channel', $store->getBaseUrl() ?? 'MAGENTO');
-        $this->kountSession->process($request);
+        if (!$updateRequest) {
+            $this->kountSession->process($request);
+        }
         $now = $this->getCurrentTime();
         $request->setData('creationDateTime', $now);
         $this->processIpAndUserAgent($request, $order);
