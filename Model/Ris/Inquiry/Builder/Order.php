@@ -152,6 +152,7 @@ class Order
 
         if ($this->dataPersistor->get('kount_post_auth_failure')) {
             $realTimeDecline = true;
+            $this->dataPersistor->set('kount_post_auth_failure', false);
         }
 
         $transactionData['transactionStatus'] = $realTimeDecline ?
