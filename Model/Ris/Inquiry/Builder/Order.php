@@ -154,9 +154,14 @@ class Order
             $realTimeDecline = true;
         }
 
-        $transactionData['transactionStatus'] = $realTimeDecline ? 'REFUSED' : ($order->getPayment()->getEntityId() ? 'CAPTURED' : 'PENDING');
+        $transactionData['transactionStatus'] = $realTimeDecline ?
+            'REFUSED' :
+            ($order->getPayment()->getMethod() ? 'CAPTURED' : 'PENDING');
+
         $transactionData['authorizationStatus'] = [
-            'authResult' => $realTimeDecline ? 'DECLINED' : ($order->getPayment()->getEntityId() ? 'APPROVED' : 'UNKNOWN')
+            'authResult' => $realTimeDecline ?
+                'DECLINED' :
+                ($order->getPayment()->getMethod() ? 'APPROVED' : 'UNKNOWN')
         ];
 
         if ($risTransactionId) {
