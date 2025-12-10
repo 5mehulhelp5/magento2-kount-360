@@ -152,11 +152,17 @@ class Order
 
         if ($this->dataPersistor->get('kount_post_auth_failure')) {
             $realTimeDecline = true;
+            $this->dataPersistor->set('kount_post_auth_failure', false);
         }
 
-        $transactionData['transactionStatus'] = $realTimeDecline ? 'REFUSED' : ($order->getPayment()->getEntityId() ? 'CAPTURED' : 'PENDING');
+        $transactionData['transactionStatus'] = $realTimeDecline ?
+            'REFUSED' :
+            ($order->getPayment()->getMethod() ? 'CAPTURED' : 'PENDING');
+
         $transactionData['authorizationStatus'] = [
-            'authResult' => $realTimeDecline ? 'DECLINED' : ($order->getPayment()->getEntityId() ? 'APPROVED' : 'UNKNOWN')
+            'authResult' => $realTimeDecline ?
+                'DECLINED' :
+                ($order->getPayment()->getMethod() ? 'APPROVED' : 'UNKNOWN')
         ];
 
         if ($risTransactionId) {
