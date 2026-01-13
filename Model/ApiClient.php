@@ -68,9 +68,9 @@ class ApiClient
                 ],
             ];
             $this->logger->info('Kount Authentication Request Initiated');
-            $this->logger->info('Start Request Time:' . time());
+            $this->logger->info('Start Request Time:' . gmdate('Y-m-d\TH:i:s\Z'));
             $response = $this->httpClient->request('POST', $authUrl, $authenticationRequest);
-            $this->logger->info('End Request Time:' . time());
+            $this->logger->info('End Request Time:' . gmdate('Y-m-d\TH:i:s\Z'));
             $data = json_decode($response->getBody()->getContents(), true);
             $this->logger->info('Kount Authentication Response Received');
             if (!isset($data['access_token'])) {
@@ -106,7 +106,7 @@ class ApiClient
         }
         try {
             $this->logger->info('Kount 360 POST Request: ' . json_encode($body));
-            $this->logger->info('Start Request Time:' . time());
+            $this->logger->info('Start Request Time:' . gmdate('Y-m-d\TH:i:s\Z'));
             $response = $this->httpClient->request('POST', $url, [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->accessToken,
@@ -118,7 +118,7 @@ class ApiClient
                 ],
                 'json' => $body,
             ]);
-            $this->logger->info('End Request Time:' . time());
+            $this->logger->info('End Request Time:' . gmdate('Y-m-d\TH:i:s\Z'));
             return json_decode($response->getBody()->getContents(), true);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 401) {
@@ -156,7 +156,7 @@ class ApiClient
 
         try {
             $this->logger->info('Kount 360 PATCH Request: ' . json_encode($body));
-            $this->logger->info('Start Request Time:' . time());
+            $this->logger->info('Start Request Time:' . gmdate('Y-m-d\TH:i:s\Z'));
             $response = $this->httpClient->request('PATCH', $url, [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->accessToken,
@@ -164,7 +164,7 @@ class ApiClient
                 ],
                 'json' => $body,
             ]);
-            $this->logger->info('End Request Time:' . time());
+            $this->logger->info('End Request Time:' . gmdate('Y-m-d\TH:i:s\Z'));
             return json_decode($response->getBody()->getContents(), true);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 401) {
