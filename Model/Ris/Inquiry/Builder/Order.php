@@ -109,6 +109,7 @@ class Order
         $transactionData['processor'] = $order->getPayment()->getMethodInstance()->getTitle();
         $transactionData['processorMerchantId'] = '';
         $paymentCode = $order->getPayment()->getMethodInstance()->getCode() ?? '';
+        $this->logger->info('Payment Code: ' . $paymentCode);
         $transactionData['payment'] = [
             'type' => $this->paymentType->getPaymentType($paymentCode),
             'paymentToken' => '',
