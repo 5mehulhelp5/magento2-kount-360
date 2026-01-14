@@ -1,43 +1,45 @@
 <?php
 /**
- * Copyright (c) 2025 KOUNT, INC.
+ * Copyright (c) 2026 KOUNT, INC.
  * See COPYING.txt for license details.
  */
 namespace Kount\Kount360\Model;
 
+use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Exception\ClientException;
+use Kount\Kount360\Helper\Data;
+use Kount\Kount360\Model\Config\Account;
+use Kount\Kount360\Model\Config\Authorization;
 
 class ApiClient
 {
+    protected string $accessToken = '';
+
     /** @var Client */
     private $httpClient;
-
-    protected string $accessToken = '';
 
     private bool $authenticationRetried = false;
 
     /**
      * @param \Kount\Kount360\Model\Config\Account $configAccount
-     * @param \Kount\Kount360\Helper\Data $helperData
      * @param \Kount\Kount360\Model\Logger $logger
      * @param \Kount\Kount360\Model\Config\Authorization $authorizationConfig
      */
     public function __construct(
-        private \Kount\Kount360\Model\Config\Account $configAccount,
-        private \Kount\Kount360\Helper\Data $helperData,
-        private \Kount\Kount360\Model\Logger $logger,
-        private \Kount\Kount360\Model\Config\Authorization $authorizationConfig
+        private Account $configAccount,
+        private Logger $logger,
+        private Authorization $authorizationConfig
     ) {
         $this->httpClient = new Client();
     }
 
     /**
-     * @param $refresh
+     * @param bool $refresh
      * @return void
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Exception
      */
     public function authenticate($refresh = false): void
     {
@@ -51,7 +53,7 @@ class ApiClient
         $this->accessToken = '';
 
         if ($this->authenticationRetried) {
-            throw new \Exception('Kount Authentication failed. Please ensure API Key is Valid');
+            throw new Exception('Kount Authentication failed. Please ensure API Key is Valid');
         }
 
         try {
@@ -66,11 +68,15 @@ class ApiClient
                 ],
             ];
             $this->logger->info('Kount Authentication Request Initiated');
+            $this->logger->info('Start Request Time:' . gmdate('Y-m-d\TH:i:s\Z'));
             $response = $this->httpClient->request('POST', $authUrl, $authenticationRequest);
+            $this->logger->info('End Request Time:' . gmdate('Y-m-d\TH:i:s\Z'));
             $data = json_decode($response->getBody()->getContents(), true);
             $this->logger->info('Kount Authentication Response Received');
             if (!isset($data['access_token'])) {
-                throw new \Exception('Kount Authentication failed. Access token not found in response. Response: '. json_encode($data));
+                throw new Exception(
+                    'Kount Authentication failed. Access token not found in response. Response: ' . json_encode($data)
+                );
             }
 
             $this->accessToken = $data['access_token'];
@@ -78,10 +84,10 @@ class ApiClient
             $this->authenticationRetried = true;
         } catch (RequestException $e) {
             $this->logger->error('Kount Authentication on Request error: ' . $e->getMessage());
-            throw new \Exception('Kount Authentication failed. Check error logs for details');
+            throw new Exception('Kount Authentication failed. Check error logs for details');
         } catch (GuzzleException $e) {
             $this->logger->error('Kount Authentication error: ' . $e->getMessage());
-            throw new \Exception('Kount Authentication failed. Check error logs for details');
+            throw new Exception('Kount Authentication failed. Check error logs for details');
         }
     }
 
@@ -100,6 +106,7 @@ class ApiClient
         }
         try {
             $this->logger->info('Kount 360 POST Request: ' . json_encode($body));
+            $this->logger->info('Start Request Time:' . gmdate('Y-m-d\TH:i:s\Z'));
             $response = $this->httpClient->request('POST', $url, [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->accessToken,
@@ -111,6 +118,7 @@ class ApiClient
                 ],
                 'json' => $body,
             ]);
+            $this->logger->info('End Request Time:' . gmdate('Y-m-d\TH:i:s\Z'));
             return json_decode($response->getBody()->getContents(), true);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 401) {
@@ -125,8 +133,7 @@ class ApiClient
             } else {
                 $this->logger->error('Kount 360 Error: No response received from the server.');
             }
-            throw new \Exception('Kount 360 Authentication error: ' . $e->getMessage());
-
+            throw new Exception('Kount 360 Authentication error: ' . $e->getMessage());
         } catch (GuzzleException $e) {
             if ($e->getResponse()->getStatusCode() === 500) {
                 $responseBody = $e->getMessage();
@@ -137,10 +144,9 @@ class ApiClient
                 }
             }
             $this->logger->error('POST request failed during action ' . $action . ': ' . $e->getMessage());
-            throw new \Exception('Kount 360 Failed to Update during  ' . $action);
+            throw new Exception('Kount 360 Failed to Update during  ' . $action);
         }
     }
-
 
     public function patch($action, $url, $body = [])
     {
@@ -150,6 +156,7 @@ class ApiClient
 
         try {
             $this->logger->info('Kount 360 PATCH Request: ' . json_encode($body));
+            $this->logger->info('Start Request Time:' . gmdate('Y-m-d\TH:i:s\Z'));
             $response = $this->httpClient->request('PATCH', $url, [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->accessToken,
@@ -157,7 +164,7 @@ class ApiClient
                 ],
                 'json' => $body,
             ]);
-
+            $this->logger->info('End Request Time:' . gmdate('Y-m-d\TH:i:s\Z'));
             return json_decode($response->getBody()->getContents(), true);
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() === 401) {
@@ -171,9 +178,8 @@ class ApiClient
             } else {
                 $this->logger->error('Kount 360 Error: No response received from the server.');
             }
-            throw new \Exception('Kount 360 Authentication error: ' . $e->getMessage());
-        }
-        catch (GuzzleException $e) {
+            throw new Exception('Kount 360 Authentication error: ' . $e->getMessage());
+        } catch (GuzzleException $e) {
             if ($e->getResponse()->getStatusCode() === 500) {
                 $responseBody = $e->getMessage();
                 if (stripos($responseBody, 'invalid token') !== false || stripos($responseBody, '401') !== false) {
@@ -189,7 +195,7 @@ class ApiClient
             } else {
                 $this->logger->error('Kount 360 Error: No response received from the server.');
             }
-            throw new \Exception('Kount 360 Failed to Update during  ' . $action);
+            throw new Exception('Kount 360 Failed to Update during  ' . $action);
         }
     }
 }

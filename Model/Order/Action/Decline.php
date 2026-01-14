@@ -168,6 +168,10 @@ class Decline implements ActionInterface
     protected function orderCancel(Order $order)
     {
         $this->logger->info('Attempting to cancel Magento order.');
+        if (!$order->getData('increment_id')) {
+            $this->logger->error('Order increment ID is not set. Unable to cancel order.');
+            return false;
+        }
 
         if ($order->canCancel()) {
             $order->cancel();
